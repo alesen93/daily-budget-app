@@ -202,7 +202,7 @@ if st.session_state.is_premium:
     st.sidebar.markdown("🔐 **Sezione Premium Attiva**")
 
     if pagina == "🏠 Home":
-        st.markdo
+        st.markdown(...)
 
 
 
