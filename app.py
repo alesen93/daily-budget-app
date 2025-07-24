@@ -93,53 +93,59 @@ if pagina == "🏠 Home":
         st.subheader("📊 Spese registrate")
         st.dataframe(df.sort_values("Scadenza").style.format({"Importo": "€{:.2f}"}), use_container_width=True)
 
-# Grafici
+# Grafici (solo Premium)
 elif pagina == "📈 Grafici":
-    st.title("📈 Analisi delle Spese")
+    if st.session_state.is_premium:
+        st.title("📈 Analisi delle Spese Premium")
 
-    if not df.empty:
-        tipo_grafico = st.selectbox("📊 Seleziona tipo di grafico", ["Torta", "Barre", "Linea"])
-        grouped = df.groupby("Categoria")["Importo"].sum()
+        if not df.empty:
+            tipo_grafico = st.selectbox("📊 Seleziona tipo di grafico", ["Torta", "Barre", "Linea"])
+            grouped = df.groupby("Categoria")["Importo"].sum()
 
-        fig, ax = plt.subplots()
-        if tipo_grafico == "Torta":
-            ax.pie(grouped, labels=grouped.index, autopct='%1.1f%%')
-            ax.set_aspect("equal")
-        elif tipo_grafico == "Barre":
-            grouped.plot(kind="bar", ax=ax)
-        elif tipo_grafico == "Linea":
-            df_agg = df.groupby("Scadenza")["Importo"].sum().sort_index()
-            df_agg.plot(kind="line", ax=ax, marker='o')
+            fig, ax = plt.subplots()
+            if tipo_grafico == "Torta":
+                ax.pie(grouped, labels=grouped.index, autopct='%1.1f%%')
+                ax.set_aspect("equal")
+            elif tipo_grafico == "Barre":
+                grouped.plot(kind="bar", ax=ax)
+            elif tipo_grafico == "Linea":
+                df_agg = df.groupby("Scadenza")["Importo"].sum().sort_index()
+                df_agg.plot(kind="line", ax=ax, marker='o')
 
-        st.pyplot(fig)
+            st.pyplot(fig)
+        else:
+            st.warning("⚠️ Nessuna spesa disponibile.")
     else:
-        st.warning("⚠️ Nessuna spesa disponibile.")
+        st.warning("🔒 Solo utenti Premium possono vedere i grafici. Vai nella sezione 🔐 Premium per sbloccare.")
 
-# Agenda
+# Agenda (solo Premium)
 elif pagina == "🗓️ Agenda":
-    st.title("🗓️ Calendario Scadenze")
+    if st.session_state.is_premium:
+        st.title("🗓️ Calendario Scadenze Premium")
 
-    if not df.empty:
-        eventi = []
-        for _, row in df.iterrows():
-            eventi.append({
-                "title": f"{row['Categoria']} - €{row['Importo']:.2f}",
-                "start": row["Scadenza"].strftime("%Y-%m-%d"),
-                "end": row["Scadenza"].strftime("%Y-%m-%d")
-            })
+        if not df.empty:
+            eventi = []
+            for _, row in df.iterrows():
+                eventi.append({
+                    "title": f"{row['Categoria']} - €{row['Importo']:.2f}",
+                    "start": row["Scadenza"].strftime("%Y-%m-%d"),
+                    "end": row["Scadenza"].strftime("%Y-%m-%d")
+                })
 
-        calendar_options = {
-            "initialView": "dayGridMonth",
-            "editable": False,
-            "selectable": False,
-            "locale": "it"
-        }
+            calendar_options = {
+                "initialView": "dayGridMonth",
+                "editable": False,
+                "selectable": False,
+                "locale": "it"
+            }
 
-        calendar(events=eventi, options=calendar_options)
+            calendar(events=eventi, options=calendar_options)
+        else:
+            st.info("🔍 Nessuna scadenza da mostrare.")
     else:
-        st.info("🔍 Nessuna scadenza da mostrare.")
+        st.warning("🔒 Solo utenti Premium possono accedere al calendario. Vai nella sezione 🔐 Premium per sbloccare.")
 
-# Esporta
+# Esporta (visibile a tutti)
 elif pagina == "📁 Esporta":
     st.title("📁 Esporta dati")
 
@@ -186,7 +192,10 @@ elif pagina == "📁 Esporta":
         with open(calendario_path, "rb") as f:
             st.download_button("⬇️ Scarica calendario PNG", f, file_name="calendario_scadenze.png")
 
-# Reset dati
+    else:
+        st.info("📭 Nessuna spesa da esportare.")
+
+# Reset dati (visibile a tutti)
 elif pagina == "🗑️ Reset dati":
     st.title("🗑️ Elimina tutti i dati")
     if st.button("❌ Cancella tutto"):
@@ -196,13 +205,6 @@ elif pagina == "🗑️ Reset dati":
         st.session_state.righe = 1
         st.success("✅ Tutti i dati sono stati eliminati!")
 
-# Sezione Premium aggiuntiva (visibile solo se sbloccata)
-if st.session_state.is_premium:
-    st.sidebar.markdown("---")
-    st.sidebar.markdown("🔐 **Sezione Premium Attiva**")
-
-    if pagina == "🏠 Home":
-        st.markdown(...)
 
 
 
