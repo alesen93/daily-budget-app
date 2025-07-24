@@ -211,5 +211,5 @@ if st.session_state.is_premium:
         st.markdown("### 📅 Agenda Interattiva Premium")
         # Qui puoi mettere funzionalità avanzate o consigli premium aggiuntivi
 
----
+
 
