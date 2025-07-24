@@ -10,26 +10,27 @@ plt.style.use('ggplot')
 
 DATA_FILE = "budget_data.csv"
 
-# Premium Access
+# Imposta lo stato premium iniziale
 if "is_premium" not in st.session_state:
     st.session_state.is_premium = False
+
 VALID_CODES = ["IMPERO-DIGITALE-2024"]
 
-# Load existing data
+# Carica dati esistenti o crea df vuoto
 if os.path.exists(DATA_FILE):
     df = pd.read_csv(DATA_FILE, parse_dates=["Scadenza"])
 else:
     df = pd.DataFrame(columns=["Categoria", "Importo", "Scadenza"])
 
-# Sidebar
+# Sidebar menu
 st.sidebar.title("💰 Menu")
 pagina = st.sidebar.radio("📂 Sezioni", ["🏠 Home", "📈 Grafici", "🗓️ Agenda", "📁 Esporta", "🗑️ Reset dati", "🔐 Premium"])
 
-# Funzione salvataggio CSV
+# Funzione per salvare dati in CSV
 def salva_df(df):
     df.to_csv(DATA_FILE, index=False)
 
-# PREMIUM ACCESS
+# Sezione Premium
 if pagina == "🔐 Premium":
     st.title("🔐 Sblocca la versione Premium")
     if not st.session_state.is_premium:
@@ -43,7 +44,7 @@ if pagina == "🔐 Premium":
     else:
         st.success("✅ Premium già attivo!")
 
-# HOME
+# Home (visibile a tutti)
 if pagina == "🏠 Home":
     st.title("🏠 Gestione Budget Mensile")
 
@@ -92,7 +93,7 @@ if pagina == "🏠 Home":
         st.subheader("📊 Spese registrate")
         st.dataframe(df.sort_values("Scadenza").style.format({"Importo": "€{:.2f}"}), use_container_width=True)
 
-# GRAFICI
+# Grafici
 elif pagina == "📈 Grafici":
     st.title("📈 Analisi delle Spese")
 
@@ -114,7 +115,7 @@ elif pagina == "📈 Grafici":
     else:
         st.warning("⚠️ Nessuna spesa disponibile.")
 
-# AGENDA
+# Agenda
 elif pagina == "🗓️ Agenda":
     st.title("🗓️ Calendario Scadenze")
 
@@ -138,7 +139,7 @@ elif pagina == "🗓️ Agenda":
     else:
         st.info("🔍 Nessuna scadenza da mostrare.")
 
-# ESPORTA
+# Esporta
 elif pagina == "📁 Esporta":
     st.title("📁 Esporta dati")
 
@@ -185,7 +186,7 @@ elif pagina == "📁 Esporta":
         with open(calendario_path, "rb") as f:
             st.download_button("⬇️ Scarica calendario PNG", f, file_name="calendario_scadenze.png")
 
-# RESET
+# Reset dati
 elif pagina == "🗑️ Reset dati":
     st.title("🗑️ Elimina tutti i dati")
     if st.button("❌ Cancella tutto"):
@@ -195,21 +196,14 @@ elif pagina == "🗑️ Reset dati":
         st.session_state.righe = 1
         st.success("✅ Tutti i dati sono stati eliminati!")
 
-# --- SEZIONI PREMIUM ---
+# Sezione Premium aggiuntiva (visibile solo se sbloccata)
 if st.session_state.is_premium:
     st.sidebar.markdown("---")
     st.sidebar.markdown("🔐 **Sezione Premium Attiva**")
 
     if pagina == "🏠 Home":
-        st.markdown("### 🎉 Benvenuto nella versione Premium!")
-        st.markdown("- Puoi ora usare l'agenda interattiva nella sezione '🗓️ Agenda'")
-        st.markdown("- Hai accesso a consigli personalizzati (in futuro)")
-        st.markdown("- Puoi esportare dati e grafici senza limiti")
+        st.markdo
 
-# Aggiungiamo la sezione Agenda premium (solo premium)
-    if pagina == "🗓️ Agenda" and st.session_state.is_premium:
-        st.markdown("### 📅 Agenda Interattiva Premium")
-        # Qui puoi mettere funzionalità avanzate o consigli premium aggiuntivi
 
 
 
