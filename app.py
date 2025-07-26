@@ -8,29 +8,33 @@ from streamlit_calendar import calendar
 st.set_page_config(page_title="Daily Budget App", page_icon="💰", layout="wide")
 plt.style.use('ggplot')
 
+# 🔒 Nascondi footer e GitHub corner
+st.markdown("""
+    <style>
+    footer {visibility: hidden;}
+    .stDeployButton {display: none;}
+    .viewerBadge_container__1QSob {display: none;}
+    </style>
+""", unsafe_allow_html=True)
+
 DATA_FILE = "budget_data.csv"
 
-# Imposta lo stato premium iniziale
 if "is_premium" not in st.session_state:
     st.session_state.is_premium = False
 
 VALID_CODES = ["IMPERO-DIGITALE-2024"]
 
-# Carica dati esistenti o crea df vuoto
 if os.path.exists(DATA_FILE):
     df = pd.read_csv(DATA_FILE, parse_dates=["Scadenza"])
 else:
     df = pd.DataFrame(columns=["Categoria", "Importo", "Scadenza"])
 
-# Sidebar menu
 st.sidebar.title("💰 Menu")
 pagina = st.sidebar.radio("📂 Sezioni", ["🏠 Home", "📈 Grafici", "🗓️ Agenda", "📁 Esporta", "🗑️ Reset dati", "🔐 Premium"])
 
-# Funzione per salvare dati in CSV
 def salva_df(df):
     df.to_csv(DATA_FILE, index=False)
 
-# Sezione Premium
 if pagina == "🔐 Premium":
     st.title("🔐 Sblocca la versione Premium")
     if not st.session_state.is_premium:
@@ -44,7 +48,6 @@ if pagina == "🔐 Premium":
     else:
         st.success("✅ Premium già attivo!")
 
-# Home (visibile a tutti)
 if pagina == "🏠 Home":
     st.title("🏠 Gestione Budget Mensile")
 
@@ -93,7 +96,6 @@ if pagina == "🏠 Home":
         st.subheader("📊 Spese registrate")
         st.dataframe(df.sort_values("Scadenza").style.format({"Importo": "€{:.2f}"}), use_container_width=True)
 
-# Grafici (solo Premium)
 elif pagina == "📈 Grafici":
     if st.session_state.is_premium:
         st.title("📈 Analisi delle Spese Premium")
@@ -118,7 +120,6 @@ elif pagina == "📈 Grafici":
     else:
         st.warning("🔒 Solo utenti Premium possono vedere i grafici. Vai nella sezione 🔐 Premium per sbloccare.")
 
-# Agenda (solo Premium)
 elif pagina == "🗓️ Agenda":
     if st.session_state.is_premium:
         st.title("🗓️ Calendario Scadenze Premium")
@@ -145,7 +146,6 @@ elif pagina == "🗓️ Agenda":
     else:
         st.warning("🔒 Solo utenti Premium possono accedere al calendario. Vai nella sezione 🔐 Premium per sbloccare.")
 
-# Esporta (visibile a tutti)
 elif pagina == "📁 Esporta":
     st.title("📁 Esporta dati")
 
@@ -195,7 +195,6 @@ elif pagina == "📁 Esporta":
     else:
         st.info("📭 Nessuna spesa da esportare.")
 
-# Reset dati (visibile a tutti)
 elif pagina == "🗑️ Reset dati":
     st.title("🗑️ Elimina tutti i dati")
     if st.button("❌ Cancella tutto"):
@@ -204,6 +203,7 @@ elif pagina == "🗑️ Reset dati":
         df = pd.DataFrame(columns=["Categoria", "Importo", "Scadenza"])
         st.session_state.righe = 1
         st.success("✅ Tutti i dati sono stati eliminati!")
+
 
 
 
