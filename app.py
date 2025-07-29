@@ -11,9 +11,10 @@ plt.style.use('ggplot')
 # ✅ Mostra sempre la sidebar e nascondi badge GitHub e footer
 st.markdown("""
     <style>
-    footer {visibility: hidden;}
-    .stDeployButton {display: none;}
-    .viewerBadge_container__1QSob {display: none;}
+    footer {visibility: hidden !important;}
+    .stDeployButton {display: none !important;}
+    .viewerBadge_container__1QSob {display: none !important;}
+    header {visibility: hidden !important;}
     [data-testid="stSidebar"] { display: block !important; }
     </style>
 """, unsafe_allow_html=True)
