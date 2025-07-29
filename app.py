@@ -14,7 +14,7 @@ st.markdown("""
     footer {visibility: hidden;}
     .stDeployButton {display: none;}
     .viewerBadge_container__1QSob {display: none;}
-    .viewerBadge_link__1S137 {display: none;}
+    
     header {visibility: hidden;}
     </style>
 """, unsafe_allow_html=True)
