@@ -7,6 +7,13 @@ from streamlit_calendar import calendar
 
 st.set_page_config(page_title="Daily Budget App", page_icon="💰", layout="wide")
 plt.style.use('ggplot')
+st.markdown("""
+    <style>
+    [data-testid="stSidebar"] {
+        display: block !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
 
 # 🔒 Nascondi footer, GitHub corner e header
 st.markdown("""
