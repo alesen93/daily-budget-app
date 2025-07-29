@@ -7,22 +7,14 @@ from streamlit_calendar import calendar
 
 st.set_page_config(page_title="Daily Budget App", page_icon="💰", layout="wide")
 plt.style.use('ggplot')
-st.markdown("""
-    <style>
-    [data-testid="stSidebar"] {
-        display: block !important;
-    }
-    </style>
-""", unsafe_allow_html=True)
 
-# 🔒 Nascondi footer, GitHub corner e header
+# ✅ Mostra sempre la sidebar e nascondi badge GitHub e footer
 st.markdown("""
     <style>
     footer {visibility: hidden;}
     .stDeployButton {display: none;}
     .viewerBadge_container__1QSob {display: none;}
-    
-    header {visibility: hidden;}
+    [data-testid="stSidebar"] { display: block !important; }
     </style>
 """, unsafe_allow_html=True)
 
@@ -44,7 +36,7 @@ pagina = st.sidebar.radio("📂 Sezioni", ["🏠 Home", "📈 Grafici", "🗓️
 def salva_df(df):
     df.to_csv(DATA_FILE, index=False)
 
-# PREMIUM
+# --- Premium Access ---
 if pagina == "🔐 Premium":
     st.title("🔐 Sblocca la versione Premium")
     if not st.session_state.is_premium:
@@ -58,7 +50,7 @@ if pagina == "🔐 Premium":
     else:
         st.success("✅ Premium già attivo!")
 
-# HOME
+# --- Home ---
 if pagina == "🏠 Home":
     st.title("🏠 Gestione Budget Mensile")
 
@@ -107,7 +99,7 @@ if pagina == "🏠 Home":
         st.subheader("📊 Spese registrate")
         st.dataframe(df.sort_values("Scadenza").style.format({"Importo": "€{:.2f}"}), use_container_width=True)
 
-# GRAFICI
+# --- Grafici ---
 elif pagina == "📈 Grafici":
     if st.session_state.is_premium:
         st.title("📈 Analisi delle Spese Premium")
@@ -130,9 +122,9 @@ elif pagina == "📈 Grafici":
         else:
             st.warning("⚠️ Nessuna spesa disponibile.")
     else:
-        st.warning("🔒 Solo utenti Premium possono vedere i grafici.")
+        st.warning("🔒 Solo utenti Premium possono vedere i grafici. Vai nella sezione 🔐 Premium per sbloccare.")
 
-# AGENDA
+# --- Agenda ---
 elif pagina == "🗓️ Agenda":
     if st.session_state.is_premium:
         st.title("🗓️ Calendario Scadenze Premium")
@@ -157,58 +149,19 @@ elif pagina == "🗓️ Agenda":
         else:
             st.info("🔍 Nessuna scadenza da mostrare.")
     else:
-        st.warning("🔒 Solo utenti Premium possono accedere al calendario.")
+        st.warning("🔒 Solo utenti Premium possono accedere al calendario. Vai nella sezione 🔐 Premium per sbloccare.")
 
-# ESPORTA
+# --- Esporta ---
 elif pagina == "📁 Esporta":
     st.title("📁 Esporta dati")
 
     if not df.empty:
         st.dataframe(df)
         st.download_button("⬇️ Scarica CSV", df.to_csv(index=False), file_name="budget_data.csv")
-
-        st.subheader("📊 Esporta Grafico")
-
-        tipo_grafico = st.selectbox("Tipo di grafico", ["Torta", "Barre", "Linea"], key="export_grafico")
-        grouped = df.groupby("Categoria")["Importo"].sum()
-
-        fig, ax = plt.subplots()
-        if tipo_grafico == "Torta":
-            ax.pie(grouped, labels=grouped.index, autopct='%1.1f%%')
-            ax.set_aspect("equal")
-        elif tipo_grafico == "Barre":
-            grouped.plot(kind="bar", ax=ax)
-        elif tipo_grafico == "Linea":
-            df_agg = df.groupby("Scadenza")["Importo"].sum().sort_index()
-            df_agg.plot(kind="line", ax=ax, marker='o')
-
-        grafico_path = "grafico_spese.png"
-        fig.savefig(grafico_path)
-        st.image(grafico_path, caption="Grafico delle spese")
-
-        with open(grafico_path, "rb") as f:
-            st.download_button("⬇️ Scarica grafico PNG", f, file_name="grafico_spese.png")
-
-        st.subheader("📆 Esporta calendario (in tabella)")
-
-        scadenze_tabella = df[["Categoria", "Importo", "Scadenza"]].sort_values("Scadenza")
-        calendario_path = "scadenze_tabella.png"
-
-        fig2, ax2 = plt.subplots(figsize=(8, len(scadenze_tabella) * 0.5 + 1))
-        ax2.axis("off")
-        tabella = pd.plotting.table(ax2, scadenze_tabella, loc="center", cellLoc="center")
-        tabella.scale(1, 1.5)
-        fig2.tight_layout()
-        fig2.savefig(calendario_path)
-
-        st.image(calendario_path, caption="Calendario delle scadenze")
-
-        with open(calendario_path, "rb") as f:
-            st.download_button("⬇️ Scarica calendario PNG", f, file_name="calendario_scadenze.png")
     else:
         st.info("📭 Nessuna spesa da esportare.")
 
-# RESET
+# --- Reset ---
 elif pagina == "🗑️ Reset dati":
     st.title("🗑️ Elimina tutti i dati")
     if st.button("❌ Cancella tutto"):
@@ -217,9 +170,6 @@ elif pagina == "🗑️ Reset dati":
         df = pd.DataFrame(columns=["Categoria", "Importo", "Scadenza"])
         st.session_state.righe = 1
         st.success("✅ Tutti i dati sono stati eliminati!")
-
-
-
 
 
 
