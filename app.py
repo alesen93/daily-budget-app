@@ -1,4 +1,3 @@
-# Forzo aggiornamento Streamlit
 import streamlit as st
 import pandas as pd
 import os
@@ -10,7 +9,7 @@ from streamlit_calendar import calendar
 st.set_page_config(page_title="Daily Budget App", page_icon="💰", layout="wide")
 plt.style.use('ggplot')
 
-# ✅ CSS per rimuovere badge GitHub e mostrare sidebar
+# ✅ CSS + JavaScript per nascondere badge GitHub e mostrare sidebar
 st.markdown("""
     <style>
     footer {visibility: hidden !important;}
@@ -18,6 +17,10 @@ st.markdown("""
     .viewerBadge_container__1QSob {display: none !important;}
     [data-testid="stSidebar"] { display: block !important; }
     </style>
+    <script>
+    const badge = window.parent.document.querySelector('.viewerBadge_container__1QSob');
+    if (badge) { badge.style.display = 'none'; }
+    </script>
 """, unsafe_allow_html=True)
 
 DATA_FILE = "budget_data.csv"
