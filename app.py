@@ -8,12 +8,14 @@ from streamlit_calendar import calendar
 st.set_page_config(page_title="Daily Budget App", page_icon="💰", layout="wide")
 plt.style.use('ggplot')
 
-# 🔒 Nascondi footer e GitHub corner
+# 🔒 Nascondi footer, GitHub corner e header
 st.markdown("""
     <style>
     footer {visibility: hidden;}
     .stDeployButton {display: none;}
     .viewerBadge_container__1QSob {display: none;}
+    .viewerBadge_link__1S137 {display: none;}
+    header {visibility: hidden;}
     </style>
 """, unsafe_allow_html=True)
 
@@ -35,6 +37,7 @@ pagina = st.sidebar.radio("📂 Sezioni", ["🏠 Home", "📈 Grafici", "🗓️
 def salva_df(df):
     df.to_csv(DATA_FILE, index=False)
 
+# PREMIUM
 if pagina == "🔐 Premium":
     st.title("🔐 Sblocca la versione Premium")
     if not st.session_state.is_premium:
@@ -48,6 +51,7 @@ if pagina == "🔐 Premium":
     else:
         st.success("✅ Premium già attivo!")
 
+# HOME
 if pagina == "🏠 Home":
     st.title("🏠 Gestione Budget Mensile")
 
@@ -96,6 +100,7 @@ if pagina == "🏠 Home":
         st.subheader("📊 Spese registrate")
         st.dataframe(df.sort_values("Scadenza").style.format({"Importo": "€{:.2f}"}), use_container_width=True)
 
+# GRAFICI
 elif pagina == "📈 Grafici":
     if st.session_state.is_premium:
         st.title("📈 Analisi delle Spese Premium")
@@ -118,8 +123,9 @@ elif pagina == "📈 Grafici":
         else:
             st.warning("⚠️ Nessuna spesa disponibile.")
     else:
-        st.warning("🔒 Solo utenti Premium possono vedere i grafici. Vai nella sezione 🔐 Premium per sbloccare.")
+        st.warning("🔒 Solo utenti Premium possono vedere i grafici.")
 
+# AGENDA
 elif pagina == "🗓️ Agenda":
     if st.session_state.is_premium:
         st.title("🗓️ Calendario Scadenze Premium")
@@ -144,8 +150,9 @@ elif pagina == "🗓️ Agenda":
         else:
             st.info("🔍 Nessuna scadenza da mostrare.")
     else:
-        st.warning("🔒 Solo utenti Premium possono accedere al calendario. Vai nella sezione 🔐 Premium per sbloccare.")
+        st.warning("🔒 Solo utenti Premium possono accedere al calendario.")
 
+# ESPORTA
 elif pagina == "📁 Esporta":
     st.title("📁 Esporta dati")
 
@@ -191,10 +198,10 @@ elif pagina == "📁 Esporta":
 
         with open(calendario_path, "rb") as f:
             st.download_button("⬇️ Scarica calendario PNG", f, file_name="calendario_scadenze.png")
-
     else:
         st.info("📭 Nessuna spesa da esportare.")
 
+# RESET
 elif pagina == "🗑️ Reset dati":
     st.title("🗑️ Elimina tutti i dati")
     if st.button("❌ Cancella tutto"):
