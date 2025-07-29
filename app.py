@@ -182,3 +182,4 @@ elif pagina == "🗑️ Reset dati":
         st.success("✅ Tutti i dati sono stati eliminati!")
 
 
+
